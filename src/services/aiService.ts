@@ -26,10 +26,9 @@ export const analyzeResume = async (
   resumeText: string,
   jobDescription: string
 ): Promise<ResumeAnalysisResult> => {
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-
-    const prompt = `
+  const apiKey =  API_KEY;
+  const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  const prompt = `
       I'm going to provide you with a resume and a job description. Please analyze how well the resume matches the job description and provide:
       
       1. A match score percentage (0-100) based on how well the resume aligns with the job requirements
@@ -49,20 +48,42 @@ export const analyzeResume = async (
       Job Description:
       ${jobDescription}
     `;
-
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
+  
+  try {
+    // Make API request using fetch
+    const response = await fetch(`${apiUrl}?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }]
+        }]
+      })
+    });
     
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API error:', errorData);
+      throw new Error(`API error: ${response.status}`);
+    }
+    const data = await response.json();
+    const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+   
+
+// Step 2: Parse it into an object
     try {
-      const parsedResponse = JSON.parse(responseText) as ResumeAnalysisResult;
-      return parsedResponse;
+      const parsedResponse =   responseText.replace(/^```json\s*|\s*```$/g, '');
+      console.log('Parsed API response:', parsedResponse);
+      return JSON.parse(parsedResponse);
     } catch (jsonError) {
       console.error('Failed to parse AI response as JSON:', jsonError);
       throw new Error('Invalid response format from AI');
     }
   } catch (error) {
-    console.error('Error analyzing resume:', error);
-    return getMockAnalysisResult(resumeText, jobDescription);
+    console.error('Failed to fetch from Gemini API:', error);
+    throw new Error('Failed to communicate with Gemini API');
   }
 };
 
