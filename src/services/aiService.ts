@@ -27,7 +27,7 @@ export const analyzeResume = async (
   jobDescription: string
 ): Promise<ResumeAnalysisResult> => {
   const apiKey =  API_KEY;
-  const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent";
   const prompt = `
       I'm going to provide you with a resume and a job description. Please analyze how well the resume matches the job description and provide:
       
