@@ -4,6 +4,7 @@ import { ArrowLeft, Download, Lightbulb, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useResumeContext } from '../context/ResumeContext';
 import { analyzeResume } from '../services/aiService';
+import ReactMarkdown from 'react-markdown';
 
 const ResultsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -193,7 +194,9 @@ const ResultsPage: React.FC = () => {
           
           <div className="bg-gray-50 p-4 rounded-md prose max-w-none whitespace-pre-wrap border border-gray-200 max-h-96 overflow-y-auto">
             {improvedResumeText ? (
-              <div>{improvedResumeText}</div>
+              <ReactMarkdown>
+              {improvedResumeText}
+            </ReactMarkdown>
             ) : (
               <p className="text-gray-500 italic">Improved resume not available.</p>
             )}

@@ -29,11 +29,12 @@ export const analyzeResume = async (
   const apiKey =  API_KEY;
   const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent";
   const prompt = `
+      You are an AI resume analysis expert.
       I'm going to provide you with a resume and a job description. Please analyze how well the resume matches the job description and provide:
       
       1. A match score percentage (0-100) based on how well the resume aligns with the job requirements
       2. A list of 3-5 specific suggestions to improve the resume for this job
-      3. An improved version of the resume tailored specifically for this job
+      3. Give it an updated resume, I can use it to apply for the job.
       
       Format your response exactly as JSON with the following structure:
       {
@@ -41,6 +42,7 @@ export const analyzeResume = async (
         "suggestions": string[],
         "improvedResume": string
       }
+      
       
       Resume:
       ${resumeText}
