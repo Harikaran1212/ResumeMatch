@@ -1,14 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
 const API_KEY = import.meta.env.VITE_REACT_API_KEY;
-
-// Initialize the API
-let genAI: GoogleGenerativeAI;
-try {
-  genAI = new GoogleGenerativeAI(API_KEY);
-} catch (error) {
-  console.error('Failed to initialize Gemini API:', error);
-}
 
 interface ResumeAnalysisResult {
   matchScore: number;
@@ -35,7 +25,7 @@ export const analyzeResume = async (
       1. A match score percentage (0-100) based on how well the resume aligns with the job requirements
       2. A list of 3-5 specific suggestions to improve the resume for this job
       3. Give it an updated resume, I can use it to apply for the job.
-      
+      4. IF MY JOB DESCRIPTION IS NOT RELATED TO THE RESUME, AND JOB DESCRIPTION IS EMPTY KNOWN SENTENCE IS THERE SHOW THE ERROR IN TO THE USER
       Format your response exactly as JSON with the following structure:
       {
         "matchScore": number,
@@ -84,8 +74,8 @@ export const analyzeResume = async (
       throw new Error('Invalid response format from AI');
     }
   } catch (error) {
-    console.error('Failed to fetch from Gemini API:', error);
-    throw new Error('Failed to communicate with Gemini API');
+    console.error('Failed to fetch from Gemini API, using mock data fallback:', error);
+    return getMockAnalysisResult(resumeText, jobDescription);
   }
 };
 

@@ -30,6 +30,8 @@ const extractTextFromPDF = async (file: File): Promise<string> => {
   }
 };
 
+import * as mammoth from 'mammoth';
+
 /**
  * Extracts text from a Word document
  * @param file The Word document to extract text from
@@ -38,11 +40,8 @@ const extractTextFromPDF = async (file: File): Promise<string> => {
 const extractTextFromDOCX = async (file: File): Promise<string> => {
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const doc = new Document(arrayBuffer);
-    
-    // This is a simplified approach; full implementation would require
-    // parsing the document's content
-    return doc.toString();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    return result.value;
   } catch (error) {
     console.error('Error extracting text from DOCX:', error);
     throw new Error('Failed to extract text from Word document');
